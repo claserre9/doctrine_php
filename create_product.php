@@ -1,27 +1,37 @@
 <?php
-// create_product.php <name>
+// create_product.php <name> <feature_name>
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
+require_once "./src/Feature.php";
+require_once "./src/Product.php";
+
 require_once "bootstrap.php";
 
-$newProductName = $argv[1];
+[$filename, $newProductName, $newFeatureName] = $argv;
+
+$feature = new Feature();
+$feature->setName($newFeatureName);
 
 $product = new Product();
 $product->setName($newProductName);
 
+$product->addFeature($feature);
+
+
+
 if (isset($entityManager)) {
     try {
+//        $entityManager->persist($feature);
         $entityManager->persist($product);
     } catch (ORMException $e) {
+        die($e->getMessage());
     }
 }
 if (isset($entityManager)) {
     try {
         $entityManager->flush();
-    } catch (OptimisticLockException $e) {
-        die($e->getMessage());
-    } catch (ORMException $e) {
+    } catch (OptimisticLockException | ORMException $e) {
         die($e->getMessage());
     }
 }

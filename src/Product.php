@@ -1,58 +1,81 @@
 <?php
-// src/Product.php
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="products")
+ * @ORM\Entity(repositoryClass="ProductRepository")
+ * @ORM\Table(name="product")
  */
 class Product
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
+
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @return mixed
+     * @ORM\OneToMany(targetEntity="Feature", mappedBy="products", cascade={"all"})
      */
-    public function getId()
+    private $features;
+
+    public function __construct()
+    {
+        $this->features = new ArrayCollection();
+    }
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param mixed $id
-     * @return Product
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     * @return Product
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Feature[]
+     */
+    public function getFeatures(): Collection
+    {
+        return $this->features;
+    }
+
+    public function addFeature(Feature $feature): self
+    {
+        if (!$this->features->contains($feature)) {
+            $this->features[] = $feature;
+            $feature->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeature(Feature $feature): self
+    {
+        if ($this->features->removeElement($feature)) {
+            // set the owning side to null (unless already changed)
+            if ($feature->getProducts() === $this) {
+                $feature->setProducts(null);
+            }
+        }
+
         return $this;
     }
 }

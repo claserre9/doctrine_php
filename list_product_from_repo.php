@@ -7,7 +7,7 @@ if (isset($entityManager)) {
     $productRepository = $entityManager->getRepository("Product");
 }
 if (isset($productRepository)) {
-    $products = $productRepository->findAll();
+    $products = $productRepository->getProductBeginningWith_D3();
 }
 
 if (!empty($products)) {

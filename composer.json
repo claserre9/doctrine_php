@@ -2,7 +2,12 @@
     "require": {
         "doctrine/orm": "^2.6.2",
         "symfony/yaml": "2.*",
-        "symfony/cache": "^5.3"
+        "symfony/cache": "^5.3",
+        "ext-redis": "*"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-0": {
